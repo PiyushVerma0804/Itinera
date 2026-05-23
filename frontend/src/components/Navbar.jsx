@@ -14,7 +14,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <NavLink to="/" className="nav-brand">
-        <span>TravelSync</span>
+        <span>Itinera</span>
       </NavLink>
       <ul className="nav-links">
         <li>
@@ -42,16 +42,16 @@ function Navbar() {
                   border: 'none',
                   color: 'var(--text-secondary)',
                   cursor: 'pointer',
-                  fontSize: '0.95rem',
+                  fontSize: '0.9rem',
                   fontWeight: 500,
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '6px',
                   fontFamily: 'inherit',
                   transition: 'var(--transition-smooth)'
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.color = 'var(--text-primary)';
-                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+                  e.target.style.backgroundColor = 'var(--bg-tertiary)';
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.color = 'var(--text-secondary)';
@@ -63,18 +63,15 @@ function Navbar() {
             </li>
           </>
         ) : (
-          <>
-            <li>
-              <NavLink to="/login" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Login
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/register" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Register
-              </NavLink>
-            </li>
-          </>
+          <li>
+            <NavLink 
+              to="/login" 
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500 }}
+            >
+              Sign In
+            </NavLink>
+          </li>
         )}
       </ul>
     </nav>

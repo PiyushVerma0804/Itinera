@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { api } from '../utils/api.js';
 
 function Dashboard() {
   const { token, user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,20 +51,20 @@ function Dashboard() {
 
     try {
       setCreating(true);
-      await api.post('/trips', {
+      const data = await api.post('/trips', {
         title,
         destination,
         startDate,
         endDate,
       });
 
-      // Reset form and re-fetch trips
+      // Reset form, navigate to new trip workspace directly
       setTitle('');
       setDestination('');
       setStartDate('');
       setEndDate('');
       setShowForm(false);
-      fetchTrips();
+      navigate(`/trip/${data._id}`);
     } catch (err) {
       setFormError(err.message);
     } finally {
@@ -262,7 +263,9 @@ function Dashboard() {
               </thead>
               <tbody>
                 {trips.map((trip) => {
-                  const isHost = trip.creator._id === user?.id || trip.creator === user?.id;
+                  const creatorId = trip.creator?._id || trip.creator;
+                  const currentUserId = user?.id || user?._id;
+                  const isHost = creatorId && currentUserId && creatorId === currentUserId;
                   return (
                     <tr key={trip._id} className="trip-row">
                       <td style={{ padding: '1rem', verticalAlign: 'middle' }}>

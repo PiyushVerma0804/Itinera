@@ -157,53 +157,70 @@ function Trip() {
         {/* Right Column: Supporting Sidebar (strictly structured) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
-          {/* 1. Workspace Owner */}
-          <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)' }}>
-              Workspace Owner
-            </h3>
-            <div className="skeleton-card" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: '2rem', height: '2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--accent-glow)', color: 'var(--accent-color)', fontWeight: 700, fontSize: '0.85rem' }}>
-                  {trip.creator.name[0].toUpperCase()}
-                </div>
+          {/* Safe helpers for Trip Creator and Member details */}
+          {(() => {
+            const creator = trip.creator || {};
+            const creatorName = creator.name || 'Unknown User';
+            const creatorEmail = creator.email || '';
+            const creatorInitials = creatorName[0]?.toUpperCase() || '?';
+            const creatorId = creator._id || (typeof trip.creator === 'string' ? trip.creator : '');
+            
+            return (
+              <>
+                {/* 1. Workspace Owner */}
                 <div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {trip.creator.name}
-                    <span className="badge" style={{ margin: 0, padding: '0.1rem 0.4rem', fontSize: '0.65rem', border: 'none', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)', textTransform: 'none' }}>Owner</span>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{trip.creator.email}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Active Planners */}
-          <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)' }}>
-              Active Planners
-            </h3>
-            <div className="skeleton-card" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {/* Always include creator first */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: '1.75rem', height: '1.75rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--accent-glow)', color: 'var(--accent-color)', fontWeight: 700, fontSize: '0.8rem' }}>
-                    {trip.creator.name[0].toUpperCase()}
-                  </div>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>{trip.creator.name} (Host)</span>
-                </div>
-
-                {trip.members && trip.members.filter(m => m._id !== trip.creator._id).map((member) => (
-                  <div key={member._id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ width: '1.75rem', height: '1.75rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)', fontWeight: 700, fontSize: '0.8rem' }}>
-                      {member.name[0].toUpperCase()}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)' }}>
+                    Workspace Owner
+                  </h3>
+                  <div className="skeleton-card" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{ width: '2rem', height: '2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--accent-glow)', color: 'var(--accent-color)', fontWeight: 700, fontSize: '0.85rem' }}>
+                        {creatorInitials}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          {creatorName}
+                          <span className="badge" style={{ margin: 0, padding: '0.1rem 0.4rem', fontSize: '0.65rem', border: 'none', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)', textTransform: 'none' }}>Owner</span>
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{creatorEmail}</div>
+                      </div>
                     </div>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-primary)' }}>{member.name}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                </div>
+
+                {/* 2. Active Planners */}
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)' }}>
+                    Active Planners
+                  </h3>
+                  <div className="skeleton-card" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {/* Always include creator first */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ width: '1.75rem', height: '1.75rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--accent-glow)', color: 'var(--accent-color)', fontWeight: 700, fontSize: '0.8rem' }}>
+                          {creatorInitials}
+                        </div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>{creatorName} (Host)</span>
+                      </div>
+
+                      {trip.members && trip.members.filter(m => m && m._id && m._id !== creatorId).map((member) => {
+                        const memberName = member.name || 'Unknown Member';
+                        const memberInitials = memberName[0]?.toUpperCase() || '?';
+                        return (
+                          <div key={member._id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <div style={{ width: '1.75rem', height: '1.75rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)', fontWeight: 700, fontSize: '0.8rem' }}>
+                              {memberInitials}
+                            </div>
+                            <span style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-primary)' }}>{memberName}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
 
           {/* 3. Workspace Details */}
           <div>
