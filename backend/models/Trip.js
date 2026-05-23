@@ -31,6 +31,10 @@ const tripSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    notes: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

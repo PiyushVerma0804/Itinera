@@ -1,25 +1,53 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext.jsx';
 
 function Home() {
+  const { user, loading } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <div style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+          Loading workspace...
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="hero-section" style={{ minHeight: '70vh', padding: '4rem 1rem' }}>
-      <div className="badge">Welcome to Itinera</div>
-      <h1 style={{ maxWidth: '720px', margin: '0 auto 1.5rem', lineHeight: '1.2' }}>
-        Plan trips together,<br />
-        experience seamlessly.
+    <div className="hero-section">
+      <div className="badge">
+        Group travel, planned together
+      </div>
+
+      <h1>
+        Stop juggling group travel.<br />
+        Start deciding together.
       </h1>
-      <p className="subtitle" style={{ maxWidth: '540px', margin: '0 auto 3rem' }}>
-        A calm collaborative planning workspace for organizing group journeys, sharing timelines, and coordinating trip details.
+
+      <p className="subtitle">
+        Itinera gives your group a shared space to align on destinations, coordinate plans, and move from ideas to a confirmed journey — together.
       </p>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
-        <Link to="/register" className="btn btn-primary" style={{ padding: '0.8rem 2.25rem', fontSize: '1rem', borderRadius: '8px', fontWeight: 700 }}>
-          Start Planning
+
+      <div className="hero-actions">
+        <Link to="/register" className="btn btn-primary btn-lg" id="cta-start-planning">
+          Start planning for free
         </Link>
-        <Link to="/login" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 500 }} onMouseEnter={(e) => e.target.style.color = 'var(--accent-color)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>
-          Sign in to existing account
+        <Link to="/login" className="hero-signin-link">
+          Already planning? Sign in
         </Link>
+      </div>
+
+      <div className="hero-social-proof">
+        <span>Built for groups who want to stop over-planning and actually travel.</span>
       </div>
     </div>
   );

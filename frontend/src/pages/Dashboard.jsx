@@ -10,7 +10,6 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Form states for creating a new trip
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [destination, setDestination] = useState('');
@@ -40,25 +39,18 @@ function Dashboard() {
     setFormError('');
 
     if (!title || !destination || !startDate || !endDate) {
-      setFormError('Please fill out all required fields');
+      setFormError('Fill in all fields to continue');
       return;
     }
 
     if (new Date(startDate) > new Date(endDate)) {
-      setFormError('Start date cannot be after end date');
+      setFormError('Start date must be before end date');
       return;
     }
 
     try {
       setCreating(true);
-      const data = await api.post('/trips', {
-        title,
-        destination,
-        startDate,
-        endDate,
-      });
-
-      // Reset form, navigate to new trip workspace directly
+      const data = await api.post('/trips', { title, destination, startDate, endDate });
       setTitle('');
       setDestination('');
       setStartDate('');
@@ -73,229 +65,207 @@ function Dashboard() {
   };
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: 'numeric', month: 'short', day: 'numeric'
+    });
   };
 
-  // Find the most recent trip to continue planning
-  const latestTrip = trips.length > 0 ? trips[0] : null;
+  const lastOpenedId = localStorage.getItem('lastOpenedTripId');
+  const activeTrip = trips.find(t => t._id === lastOpenedId) || (trips.length > 0 ? trips[0] : null);
 
   return (
     <div className="dashboard-container">
-      {/* Top Area: Minimal Navigation Breadcrumb & Context */}
-      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 500 }}>
-        Workspace / My Trips
+
+      {/* Breadcrumb */}
+      <div className="breadcrumb">
+        Planning Hub
       </div>
-      <div className="page-header" style={{ marginBottom: '2.5rem' }}>
+
+      {/* Page Header */}
+      <div className="page-header">
         <div>
-          <h2 className="page-title" style={{ fontSize: '1.9rem', marginBottom: '0.25rem' }}>
-            My Active Workspaces
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-            Coordinate itineraries and manage active coordination platforms.
+          <h2 className="page-title">Your planning spaces</h2>
+          <p className="page-subtitle">
+            Pick up where you left off, or bring a new journey to life.
           </p>
         </div>
-        <button 
-          onClick={() => setShowForm(!showForm)} 
-          className="btn btn-primary"
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className={`btn ${showForm ? 'btn-secondary' : 'btn-primary'}`}
+          id="btn-new-journey"
         >
-          {showForm ? 'Close Form' : '+ Plan New Trip'}
+          {showForm ? 'Never mind' : '+ New journey'}
         </button>
       </div>
 
       {error && (
-        <div style={{
-          backgroundColor: '#fef2f2',
-          border: '1px solid #fee2e2',
-          color: '#ef4444',
-          padding: '1rem',
-          borderRadius: '8px',
-          fontSize: '0.9rem',
-          marginBottom: '2rem'
-        }}>
-          Error loading travel workspace: {error}
+        <div className="alert alert-error">
+          Couldn't reach your planning spaces: {error}
         </div>
       )}
 
-      {/* Primary Action Area: Continuation Flow */}
-      {!loading && !showForm && latestTrip && (
-        <div style={{ marginBottom: '2.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)' }}>
-            Continue Planning
-          </h3>
-          <div className="continue-planning-card">
-            <div>
-              <span className="badge" style={{ margin: 0, marginBottom: '0.5rem', padding: '0.2rem 0.6rem', fontSize: '0.7rem' }}>
-                Most Recent Active Workspace
-              </span>
-              <h4 style={{ fontSize: '1.35rem', fontWeight: 800, marginTop: '0.25rem', color: 'var(--text-primary)' }}>
-                {latestTrip.title}
-              </h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.1rem' }}>
-                Destination: {latestTrip.destination} | Dates: {formatDate(latestTrip.startDate)} - {formatDate(latestTrip.endDate)}
-              </p>
-            </div>
-            <Link to={`/trip/${latestTrip._id}`} className="btn btn-primary" style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem' }}>
-              Resume Planning →
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Inline Trip Creation Form (collapsible, simple visual widget) */}
+      {/* Inline Journey Creation */}
       {showForm && (
-        <div className="skeleton-card" style={{ marginBottom: '2.5rem', borderLeft: '4px solid var(--accent-color)' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.25rem', color: 'var(--text-primary)' }}>
-            Plan a New Journey
-          </h3>
-          
+        <div className="panel panel-accent" style={{ marginBottom: '2rem' }}>
+          <h3 className="panel-title">Where are you headed?</h3>
+          <p className="panel-subtitle">Give your group journey a name and a destination to get started.</p>
+
           {formError && (
-            <div style={{
-              backgroundColor: '#fef2f2',
-              border: '1px solid #fee2e2',
-              color: '#ef4444',
-              padding: '0.75rem',
-              borderRadius: '6px',
-              fontSize: '0.85rem',
-              marginBottom: '1.25rem'
-            }}>
+            <div className="alert alert-error" style={{ marginBottom: '1.25rem' }}>
               {formError}
             </div>
           )}
 
-          <form onSubmit={handleCreateTrip} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', gridColumn: 'span 2' }}>
-              <label>Trip Title</label>
+          <form onSubmit={handleCreateTrip} className="trip-form">
+            <div className="form-group form-group-full">
+              <label className="form-label">Journey name</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., Summer in Tokyo"
+                placeholder="e.g., Golden Week in Kyoto"
+                className="form-input"
+                id="input-journey-title"
               />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', gridColumn: 'span 2' }}>
-              <label>Destination</label>
+            <div className="form-group form-group-full">
+              <label className="form-label">Destination</label>
               <input
                 type="text"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
-                placeholder="e.g., Tokyo, Japan"
+                placeholder="e.g., Kyoto, Japan"
+                className="form-input"
+                id="input-journey-destination"
               />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              <label>Start Date</label>
+            <div className="form-group">
+              <label className="form-label">Departure date</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
+                className="form-input"
+                id="input-journey-start"
               />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              <label>End Date</label>
+            <div className="form-group">
+              <label className="form-label">Return date</label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
+                className="form-input"
+                id="input-journey-end"
               />
             </div>
 
-            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '0.5rem' }}>
-              <button 
-                type="button" 
-                onClick={() => setShowForm(false)} 
+            <div className="form-actions">
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
                 className="btn btn-secondary"
               >
                 Cancel
               </button>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary"
                 disabled={creating}
+                id="btn-create-journey"
               >
-                {creating ? 'Saving...' : 'Add Trip to Workspace'}
+                {creating ? 'Opening workspace…' : 'Open planning space →'}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Row-Based Workspace List Area */}
+      {/* Continue Planning — Active Journey */}
+      {!loading && !showForm && activeTrip && (
+        <div style={{ marginBottom: '2.5rem' }}>
+          <div className="section-label">Continue planning</div>
+          <div className="continue-card">
+            <div className="continue-card-body">
+              <div className="continue-card-tag">Where you left off</div>
+              <h3 className="continue-card-title">{activeTrip.title}</h3>
+              <p className="continue-card-meta">
+                {activeTrip.destination} &nbsp;·&nbsp; {formatDate(activeTrip.startDate)} – {formatDate(activeTrip.endDate)}
+              </p>
+            </div>
+            <Link
+              to={`/trip/${activeTrip._id}`}
+              className="btn btn-primary"
+              id="btn-resume-planning"
+            >
+              Resume planning →
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Active Planning Spaces */}
       <div>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          All Travel Workspaces
-        </h3>
+        <div className="section-label">
+          {loading ? 'Loading…' : trips.length === 0 ? 'No active spaces' : `Active planning spaces (${trips.length})`}
+        </div>
 
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {[1, 2].map((n) => (
-              <div key={n} className="skeleton-card">
-                <div className="skeleton-title" style={{ width: '40%' }}></div>
-                <div className="skeleton-line"></div>
-              </div>
-            ))}
+          <div className="skeleton-list">
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
           </div>
         ) : trips.length === 0 ? (
-          <div className="skeleton-card" style={{ padding: '4rem 2rem', textAlign: 'center', backgroundColor: 'var(--bg-secondary)' }}>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-              Your Workspace is Empty
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '440px', margin: '0 auto 2rem' }}>
-              No travel itineraries found in your current workspace. Begin planning your next journey together.
+          <div className="empty-state">
+            <div className="empty-state-icon">🗺️</div>
+            <h3 className="empty-state-title">No journeys in progress</h3>
+            <p className="empty-state-body">
+              Create your first group planning space and invite others to start deciding together.
             </p>
-            <button onClick={() => setShowForm(true)} className="btn btn-primary">
-              Plan your first trip
+            <button
+              onClick={() => setShowForm(true)}
+              className="btn btn-primary"
+              id="btn-first-journey"
+            >
+              Plan your first journey
             </button>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="workspace-table">
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', textAlign: 'left' }}>
-                  <th style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Trip Title & Destination</th>
-                  <th style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Travel Dates</th>
-                  <th style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Role</th>
-                  <th style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', textAlign: 'center' }}>Planners</th>
-                  <th style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', textAlign: 'right' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {trips.map((trip) => {
-                  const creatorId = trip.creator?._id || trip.creator;
-                  const currentUserId = user?.id || user?._id;
-                  const isHost = creatorId && currentUserId && creatorId === currentUserId;
-                  return (
-                    <tr key={trip._id} className="trip-row">
-                      <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
-                        <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{trip.title}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>Destination: {trip.destination}</div>
-                      </td>
-                      <td style={{ padding: '1rem', verticalAlign: 'middle', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                        {formatDate(trip.startDate)} - {formatDate(trip.endDate)}
-                      </td>
-                      <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
-                        <span className="badge" style={{ margin: 0, padding: '0.2rem 0.6rem', fontSize: '0.7rem', textTransform: 'none', backgroundColor: isHost ? 'var(--accent-glow)' : 'var(--bg-tertiary)', color: isHost ? 'var(--accent-color)' : 'var(--text-secondary)', border: 'none' }}>
-                          {isHost ? 'Owner' : 'Member'}
-                        </span>
-                      </td>
-                      <td style={{ padding: '1rem', verticalAlign: 'middle', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 500 }}>
-                        {trip.members ? trip.members.length : 1}
-                      </td>
-                      <td style={{ padding: '1rem', verticalAlign: 'middle', textAlign: 'right' }}>
-                        <Link to={`/trip/${trip._id}`} style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-color)', textDecoration: 'none' }} onMouseEnter={(e) => e.target.style.textDecoration = 'underline'} onMouseLeave={(e) => e.target.style.textDecoration = 'none'}>
-                          Open Workspace →
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="journey-list">
+            {trips.map((trip) => {
+              const creatorId = trip.creator?._id || trip.creator;
+              const currentUserId = user?.id || user?._id;
+              const isHost = creatorId && currentUserId && creatorId === currentUserId;
+              return (
+                <div key={trip._id} className="journey-row">
+                  <div className="journey-row-info">
+                    <div className="journey-row-header">
+                      <span className="journey-row-title">{trip.title}</span>
+                      <span className={`role-badge ${isHost ? 'role-badge-host' : 'role-badge-member'}`}>
+                        {isHost ? 'Organizer' : 'Co-planner'}
+                      </span>
+                    </div>
+                    <div className="journey-row-meta">
+                      {trip.destination}&nbsp;·&nbsp;{formatDate(trip.startDate)} – {formatDate(trip.endDate)}
+                    </div>
+                  </div>
+                  <Link
+                    to={`/trip/${trip._id}`}
+                    className="journey-row-action"
+                    id={`btn-open-${trip._id}`}
+                  >
+                    Open space →
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
+
     </div>
   );
 }

@@ -89,3 +89,44 @@ export const getTripById = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Update a trip
+// @route   PUT /api/trips/:id
+// @access  Private
+export const updateTrip = async (req, res, next) => {
+  const { title, destination, startDate, endDate, notes } = req.body;
+
+  try {
+    const trip = await Trip.findById(req.params.id);
+
+    if (!trip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
+
+    // Check authorization: must be creator or member
+    const isCreator = trip.creator.toString() === req.user.id;
+    const isMember = isCreator || trip.members.some(
+      (m) => m.toString() === req.user.id
+    );
+
+    if (!isMember) {
+      return res.status(401).json({ message: 'User not authorized to update this trip' });
+    }
+
+    if (title !== undefined) trip.title = title;
+    if (destination !== undefined) trip.destination = destination;
+    if (startDate !== undefined) trip.startDate = startDate;
+    if (endDate !== undefined) trip.endDate = endDate;
+    if (notes !== undefined) trip.notes = notes;
+
+    const updatedTrip = await trip.save();
+
+    const populatedTrip = await Trip.findById(updatedTrip._id)
+      .populate('creator', 'name email')
+      .populate('members', 'name email');
+
+    res.status(200).json(populatedTrip);
+  } catch (error) {
+    next(error);
+  }
+};

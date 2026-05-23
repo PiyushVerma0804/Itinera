@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <div style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>
-          Restoring session...
+          Loading your planning space…
         </div>
       </div>
     );
@@ -37,7 +37,7 @@ const GuestRoute = ({ children }) => {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <div style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>
-          Restoring session...
+          Loading your planning space…
         </div>
       </div>
     );

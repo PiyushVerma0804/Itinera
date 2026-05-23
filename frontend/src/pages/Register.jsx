@@ -10,105 +10,97 @@ function Register() {
   const { register, user, error, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Redirect if already authenticated
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
+    if (user) navigate('/dashboard');
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValidationError('');
-
     if (!name || !email || !password) {
-      setValidationError('Please enter all required fields');
+      setValidationError('Fill in all fields to create your account');
       return;
     }
-
     if (password.length < 6) {
-      setValidationError('Password must be at least 6 characters long');
+      setValidationError('Password must be at least 6 characters');
       return;
     }
-
     const result = await register(name, email, password);
-    if (result.success) {
-      navigate('/dashboard');
-    }
+    if (result.success) navigate('/dashboard');
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '4rem auto 0', padding: '1rem' }}>
-      <div className="skeleton-card" style={{ padding: '2.5rem 2rem', backgroundColor: 'var(--bg-secondary)' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 700, marginBottom: '0.4rem', textAlign: 'center', color: 'var(--text-primary)' }}>
-          Create Account
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '2rem', textAlign: 'center' }}>
-          Sign up to collaborate with friends on trips.
+    <div className="auth-page">
+      <div className="auth-card">
+
+        <div className="auth-brand">Itinera</div>
+
+        <h2 className="auth-title">Start planning together</h2>
+        <p className="auth-subtitle">
+          Create your account and open your first group planning space.
         </p>
 
         {(validationError || error) && (
-          <div style={{
-            backgroundColor: '#fef2f2',
-            border: '1px solid #fee2e2',
-            color: '#ef4444',
-            padding: '0.75rem',
-            borderRadius: '6px',
-            fontSize: '0.85rem',
-            marginBottom: '1.5rem',
-            textAlign: 'center'
-          }}>
+          <div className="alert alert-error" style={{ marginBottom: '1.25rem', textAlign: 'center' }}>
             {validationError || error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label>Full Name</label>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="auth-field">
+            <label htmlFor="register-name">Your name</label>
             <input
+              id="register-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="John Doe"
+              placeholder="How your group will see you"
+              autoComplete="name"
             />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label>Email Address</label>
+          <div className="auth-field">
+            <label htmlFor="register-email">Email</label>
             <input
+              id="register-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
+              autoComplete="email"
             />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label>Password (min 6 characters)</label>
+          <div className="auth-field">
+            <label htmlFor="register-password">Password <span style={{ fontWeight: 400, color: 'var(--text-tertiary)' }}>(min. 6 characters)</span></label>
             <input
+              id="register-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              autoComplete="new-password"
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary" 
+          <button
+            type="submit"
+            className="btn btn-primary"
             disabled={loading}
-            style={{ width: '100%', marginTop: '0.5rem', justifyContent: 'center' }}
+            id="btn-register"
+            style={{ width: '100%', justifyContent: 'center', marginTop: '0.25rem' }}
           >
-            {loading ? 'Creating account...' : 'Sign Up'}
+            {loading ? 'Creating account…' : 'Create planning account →'}
           </button>
         </form>
 
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '1.75rem', textAlign: 'center' }}>
+        <p className="auth-footer">
           Already have an account?{' '}
-          <Link to="/login" style={{ color: 'var(--accent-color)', textDecoration: 'none', fontWeight: 600 }}>
-            Log in
+          <Link to="/login" className="auth-link">
+            Sign in
           </Link>
         </p>
+
       </div>
     </div>
   );
