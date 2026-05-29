@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Trip from './pages/Trip.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
+import JoinTrip from './pages/JoinTrip.jsx';
 
 // Route Guard for protected pages
 const ProtectedRoute = ({ children }) => {
@@ -94,6 +95,7 @@ function MainAppLayout() {
               <Trip />
             </ProtectedRoute>
           } />
+          <Route path="/join/:inviteCode" element={<JoinTrip />} />
         </Routes>
       </main>
     </div>

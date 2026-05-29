@@ -11,7 +11,14 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) navigate('/dashboard');
+    if (user) {
+      const pendingJoinCode = localStorage.getItem('pendingJoinInviteCode');
+      if (pendingJoinCode) {
+        navigate(`/join/${pendingJoinCode}`);
+      } else {
+        navigate('/dashboard');
+      }
+    }
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
@@ -26,7 +33,14 @@ function Register() {
       return;
     }
     const result = await register(name, email, password);
-    if (result.success) navigate('/dashboard');
+    if (result.success) {
+      const pendingJoinCode = localStorage.getItem('pendingJoinInviteCode');
+      if (pendingJoinCode) {
+        navigate(`/join/${pendingJoinCode}`);
+      } else {
+        navigate('/dashboard');
+      }
+    }
   };
 
   return (

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 
 const tripSchema = new mongoose.Schema(
   {
@@ -31,6 +32,12 @@ const tripSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    inviteCode: {
+      type: String,
+      unique: true,
+      required: true,
+      default: () => crypto.randomBytes(6).toString('hex'),
+    },
     notes: {
       type: String,
       default: '',
