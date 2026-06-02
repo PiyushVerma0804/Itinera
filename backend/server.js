@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
+import preferenceRoutes from './routes/preferenceRoutes.js';
+import planningRoutes from './routes/planningRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 
 // Load environment variables
@@ -21,6 +23,8 @@ app.use(express.json());
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/trips', preferenceRoutes);
+app.use('/api', planningRoutes);
 
 // Base route status check
 app.get('/', (req, res) => {
