@@ -1,15 +1,22 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
+import destinationRoutes from './routes/destinationRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
 import preferenceRoutes from './routes/preferenceRoutes.js';
 import planningRoutes from './routes/planningRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Load environment variables
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
 
 // Connect to MongoDB Database
 connectDB();
@@ -25,6 +32,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/trips', preferenceRoutes);
 app.use('/api', planningRoutes);
+app.use('/api/destinations', destinationRoutes);
 
 // Base route status check
 app.get('/', (req, res) => {
