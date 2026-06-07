@@ -9,6 +9,7 @@ import userRoutes from './routes/userRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
 import preferenceRoutes from './routes/preferenceRoutes.js';
 import planningRoutes from './routes/planningRoutes.js';
+import itineraryRoutes from './routes/itineraryRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,7 @@ app.use('/api/trips', tripRoutes);
 app.use('/api/trips', preferenceRoutes);
 app.use('/api', planningRoutes);
 app.use('/api/destinations', destinationRoutes);
+app.use('/api/itineraries', itineraryRoutes);
 
 // Base route status check
 app.get('/', (req, res) => {
