@@ -6,7 +6,7 @@ import {
   deletePlanningItem,
   toggleVote
 } from '../controllers/planningController.js';
-import auth from '../middleware/auth.js';
+import auth from '../../auth/middleware/auth.js';
 
 const router = express.Router();
 

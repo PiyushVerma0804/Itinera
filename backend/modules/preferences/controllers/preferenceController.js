@@ -1,5 +1,5 @@
 import Preference from '../models/Preference.js';
-import Trip from '../models/Trip.js';
+import Trip from '../../trip/models/Trip.js';
 
 // Helper function to calculate Mode (most common element) in an array
 const getMode = (arr) => {

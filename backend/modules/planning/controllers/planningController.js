@@ -1,5 +1,5 @@
 import PlanningItem from '../models/PlanningItem.js';
-import Trip from '../models/Trip.js';
+import Trip from '../../trip/models/Trip.js';
 
 // @desc    Create a new planning item for a trip
 // @route   POST /api/trips/:tripId/planning

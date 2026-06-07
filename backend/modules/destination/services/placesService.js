@@ -4,7 +4,7 @@ import {
   getAttractions as getGeoapifyAttractions,
   getActivities as getGeoapifyActivities,
   fetchAllDestinationPlaces as fetchAllGeoapifyDestinationPlaces
-} from '../providers/geoapifyProvider.js';
+} from '../providers/geoapify.provider.js';
 
 /**
  * Fetches hotels for a given destination

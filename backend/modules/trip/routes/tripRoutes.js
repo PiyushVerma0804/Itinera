@@ -10,7 +10,7 @@ import {
   getMembers,
   removeMember
 } from '../controllers/tripController.js';
-import auth from '../middleware/auth.js';
+import auth from '../../auth/middleware/auth.js';
 
 const router = express.Router();
 

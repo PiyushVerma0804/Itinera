@@ -1,5 +1,5 @@
 import Trip from '../models/Trip.js';
-import User from '../models/User.js';
+import User from '../../auth/models/User.js';
 
 // @desc    Create a new trip
 // @route   POST /api/trips

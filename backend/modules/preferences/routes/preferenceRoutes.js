@@ -1,6 +1,6 @@
 import express from 'express';
 import { savePreferences, getTripPreferences } from '../controllers/preferenceController.js';
-import auth from '../middleware/auth.js';
+import auth from '../../auth/middleware/auth.js';
 
 const router = express.Router();
 
